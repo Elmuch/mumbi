@@ -14,6 +14,7 @@ clf = nfc.ContactlessFrontend('usb')
 @app.route('/card-api/read')
 def read():
 	tag = clf.connect(rdwr={'on-connect': None})
+	print tag.ndef.message.pretty()
 	return str(tag.ndef.message)
 
 filename = 'photo.jpg'
@@ -27,10 +28,8 @@ def write():
 	tag = clf.connect(rdwr={'on-connect': None})
 	data = request.json
 	ndef_records = []
-
-	for objs in data:
-		for key in objs:
-			ndef_records.append(nfc.ndef.Record("urn:nfc:wkt:T", key,objs[key]))
+	for key in data:
+		ndef_records.append(nfc.ndef.Record("urn:nfc:wkt:T", key,str(data[key])))
 
 	tag.ndef.message = nfc.ndef.Message(ndef_records)
 
@@ -50,3 +49,5 @@ if __name__ == "__main__":
     host="0.0.0.0",
     port=int("5000")
   )
+# write()
+# read()
