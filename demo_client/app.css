@@ -72,22 +72,17 @@ html{
   margin-top: 10px;
 }
 
-.payment-info{
-  display: block;
-}
-
-.payment-info::before{
-  content: 'Payment: ';
-  font-weight: bold;
-}
-
-.date-info::before{
-  content: 'Date: ';
-  font-weight: bold;
-}
-
 .list-unstyled{
   text-align: left;
   position: relative;
   left: 40%;
+}
+
+.data-key{
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.data-val{
+  text-align: left;
 }

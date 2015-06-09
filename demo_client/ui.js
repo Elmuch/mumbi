@@ -3,9 +3,27 @@
 	$('#read-ndef').click(function(event) {
 		$('#write-template').hide();
 	  $('#read-template').fadeIn(1000);
+		
 		var req = $.ajax({ url: 'http://127.0.0.1:5000/card-api/read'})
+		
 		req.done(function(data){
-			$('#user-data').text(data)
+			data = JSON.parse(data);
+				$tbl = $('<table/>',{
+					'class':"table stripped"
+				})
+			console.log(data)
+			for (var i = 0; i < data.length; i++) {
+				$tr = $('<tr/>')
+				$tr.append($('<td/>',{
+					"text": data[i].name,
+					"class":'data-key'
+				}),$('<td/>',{
+					"text":data[i].data,
+					"class": "data-val"
+				}))
+				$tbl.append($tr)
+			}
+			$('#user-data').append($tbl)
 		})
 
 		req.fail(function(){
@@ -40,6 +58,7 @@
 		var req = $.ajax({ url: 'http://127.0.0.1:5000/card-api/write',
 			type: "POST",
 			contentType: 'application/json',
+				// data: JSON.stringify(sample_data),
 		 		data: JSON.stringify({
 		 			date: (function(){
 		 				var date = new Date()

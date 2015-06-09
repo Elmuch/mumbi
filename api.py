@@ -21,21 +21,19 @@ def read():
 	
 	card_data = []
 	ndef_record = {}
-	
-	print tag.ndef.message.pretty()
 
 	for record in tag.ndef.message:
 		ndef_record["data"] = record.data
 		ndef_record["type"] = record.type
 		ndef_record["name"] = record.name
-		card_data.append(ndef_record)
+		print ndef_record
+		card_data.append(ndef_record.copy())
+	
 	return json.dumps(card_data)
 
 filename = 'photo.jpg'
 with open(filename, 'rb') as f:
     content = f.read()
-
-	# 
 	# record11 = nfc.ndef.Record("urn:nfc:wkt:T", "photo", binascii.hexlify(content))
 
 @app.route("/card-api/write", methods=['POST'])
@@ -43,9 +41,9 @@ def write():
 	tag = clf.connect(rdwr={'on-connect': None})
 	data = request.json
 	ndef_records = []
-	print data
+	
 	for key in data:
-		ndef_records.append(nfc.ndef.Record("urn:nfc:wkt:T", key,str(data[key])))
+		ndef_records.append(nfc.ndef.Record("urn:nfc:wkt:T", key, str(data[key])))
 
 	tag.ndef.message = nfc.ndef.Message(ndef_records)
 
