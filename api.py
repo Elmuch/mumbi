@@ -1,5 +1,6 @@
 
 import nfc
+import json
 from flask import Flask,send_file,request,jsonify
 import binascii
 from flask.ext.cors import CORS 
@@ -11,15 +12,29 @@ CORS(app, resources=r'/api/*', allow_headers='Content-Type')
 
 clf = nfc.ContactlessFrontend('usb')
 
+def ndef_to_json(ndef): # Text records
+	pass
+
 @app.route('/card-api/read')
 def read():
 	tag = clf.connect(rdwr={'on-connect': None})
+	
+	card_data = []
+	ndef_record = {}
+	
 	print tag.ndef.message.pretty()
-	return str(tag.ndef.message)
+
+	for record in tag.ndef.message:
+		ndef_record["data"] = record.data
+		ndef_record["type"] = record.type
+		ndef_record["name"] = record.name
+		card_data.append(ndef_record)
+	return json.dumps(card_data)
 
 filename = 'photo.jpg'
 with open(filename, 'rb') as f:
     content = f.read()
+
 	# 
 	# record11 = nfc.ndef.Record("urn:nfc:wkt:T", "photo", binascii.hexlify(content))
 
@@ -28,6 +43,7 @@ def write():
 	tag = clf.connect(rdwr={'on-connect': None})
 	data = request.json
 	ndef_records = []
+	print data
 	for key in data:
 		ndef_records.append(nfc.ndef.Record("urn:nfc:wkt:T", key,str(data[key])))
 

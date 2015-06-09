@@ -3,10 +3,9 @@
 	$('#read-ndef').click(function(event) {
 		$('#write-template').hide();
 	  $('#read-template').fadeIn(1000);
-		console.log("hello")
 		var req = $.ajax({ url: 'http://127.0.0.1:5000/card-api/read'})
 		req.done(function(data){
-			console.log(data)
+			$('#user-data').text(data)
 		})
 
 		req.fail(function(){
@@ -37,11 +36,20 @@
 		  "tra_datefieldwork":"",
 		  "tra_fieldwork_use_id":0
 		}
-		
+
 		var req = $.ajax({ url: 'http://127.0.0.1:5000/card-api/write',
 			type: "POST",
 			contentType: 'application/json',
-		 		data: JSON.stringify(sample_data),
+		 		data: JSON.stringify({
+		 			date: (function(){
+		 				var date = new Date()
+		 				$('#date').val(date.toLocaleString());
+		 				return date.toLocaleString()
+		 			})(), 
+		 			tra_id: $('#tra-id').val(),
+		 			tra_valuesubsidy: $('#tra_valuesubsidy').val(),
+		 			tra_fieldwork_use_id: $('#tra_fieldwork_use_id').val()
+		 		}),
 	  		dataType: 'json'
 		});
 
