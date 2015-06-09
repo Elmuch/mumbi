@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mumbi</title>
+  <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap-theme.css">
+  <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.css">
+  <link href="app.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+  <div class="wrapper container">
+    <div class="page-header">
+      <h1>SNP PAYMENTS REGISTER</h1>
+    </div>
+    <div class="col-sm-4">
+      <ul class="list-group">
+        <li class="list-group-item" id="write-tab">Write</li>
+        <li class="list-group-item" id="read-ndef">Read</li> 
+        <li class="list-group-item" id="read-ndef">Emulate</li> 
+      </ul>
+    </div>
+    <div class="col-sm-8">
+      <form class="form-horizontal" id='write-template'>
+        <fieldset>
+        <div class="form-group">
+          <label class="col-md-4 control-label" for="c-id">ID</label>  
+          <div class="col-md-4">
+          <input id="c-id" name="c-id" type="text" 
+            class="form-control input-md " disabled>
+            
+          </div>
+        </div>
+        <!-- Text input-->
+        <div class="form-group">
+          <label class="col-md-4 control-label" for="payment">Payment</label>  
+          <div class="col-md-4">
+          <input id="payment" name="payment" type="text" 
+            placeholder="Amount Dispensed" class="form-control input-md">
+            
+          </div>
+        </div>
+
+        <!-- Text input-->
+        <div class="form-group">
+          <label class="col-md-4 control-label" for="date">Date</label>  
+          <div class="col-md-4">
+          <input id="date" name="date" type="text" placeholder="Time Stamp" 
+            class="form-control input-md" disabled>
+            
+          </div>
+        </div>
+
+        <!-- File Button --> 
+        <div class="form-group">
+          <label class="col-md-4 control-label" for="Upload Button">Upload Photo</label>
+          <div class="col-md-4">
+            <input id="Upload Button" name="Upload Button" class="input-file" type="file">
+          </div>
+        </div>
+
+        <!-- Button -->
+        <div class="form-group">
+          <label class="col-md-4 control-label" for="write-ndef"></label>
+          <div class="col-md-4">
+            <button id="write-ndef" name="write-ndef" class="btn btn-default">Write to Card</button>
+          </div>
+        </div>
+
+        </fieldset>
+      </form>
+      <div class="panel panel-default" id='read-template'>
+        <div class="panel-body">
+          <div class="image-wrapper">
+            <img src="images/placeholder.png">
+          </div>
+          <div id="user-data">
+            
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="info-area col-sm-12"> 
+      <div class="col-sm-4">
+        <img id="device-thumbnail" class="hidden"/>
+        <dl id="device-info">
+          <dt>Name</dt>
+          <dd id="device-name"></dd>
+          <dt>Vendor ID</dt>
+          <dd id="device-vendor-id"></dd>
+          <dt>Product ID</dt>
+          <dd id="device-product-id"></dd>
+        </dl>
+      </div>
+      <div class="col-sm-8 logs" id='logContainer'>
+        <span class='clear-logs'>Clear logs</span>
+        <!-- <p class="text-info">This is happening</p>
+        <p  class="text-danger">This is happening</p>
+        <p class="text-success">This is happening</p> -->
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript" src="bower_components/jquery/dist/jquery.js"></script>
+  <script type="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+  <script type="text/javascript" src="bower_components/chrome-nfc/dist/chrome-nfc.js"></script>
+  <script type="text/javascript" src="bower_components/jquery-ui/jquery-ui.js"></script>
+  <script src="app.js"></script>
+  <script src="ui.js"></script>
+</body>
+</html>
