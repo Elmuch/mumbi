@@ -12,42 +12,60 @@ CORS(app, resources=r'/api/*', allow_headers='Content-Type')
 
 clf = nfc.ContactlessFrontend('usb')
 
-def ndef_to_json(ndef): # Text records
-	pass
+
+def write_to_file(content,file_name): # Text records
+	fo = open("uploads/"+file_name+".jpg","wb")
+	fo.write(content)
+	return("uploads/"+file_name+".jpg")
 
 @app.route('/card-api/read')
 def read():
-	tag = clf.connect(rdwr={'on-connect': None})
+	try:
+		tag = clf.connect(rdwr={'on-connect': None})
 	
-	card_data = []
-	ndef_record = {}
+		card_data = []
+		ndef_record = {}
 
-	for record in tag.ndef.message:
-		ndef_record["data"] = record.data
-		ndef_record["type"] = record.type
-		ndef_record["name"] = record.name
-		print ndef_record
-		card_data.append(ndef_record.copy())
-	
-	return json.dumps(card_data)
+		for record in tag.ndef.message:
+			if record.name == 'photo':
+				img_url = write_to_file(record.data,"test_photo")
+				ndef_record['data'] = img_url # Get the url and leave content in the card
+				ndef_record["type"] = record.type
+				ndef_record["name"] = record.name
+				card_data.append(ndef_record.copy())
+				continue
 
-filename = 'photo.jpg'
-with open(filename, 'rb') as f:
-    content = f.read()
-	# record11 = nfc.ndef.Record("urn:nfc:wkt:T", "photo", binascii.hexlify(content))
+			ndef_record["data"] = record.data
+			ndef_record["type"] = record.type
+			ndef_record["name"] = record.name
+
+			card_data.append(ndef_record.copy())
+		
+		return json.dumps(card_data)
+	except Exception, e:
+		return "Unable to read Tag"+str(e),500
+
+def read_photo(url):
+	f = open(url, 'rb')
+	return f.read()
 
 @app.route("/card-api/write", methods=['POST'])
 def write():
-	tag = clf.connect(rdwr={'on-connect': None})
-	data = request.json
-	ndef_records = []
-	
-	for key in data:
-		ndef_records.append(nfc.ndef.Record("urn:nfc:wkt:T", key, str(data[key])))
+	try:
+		tag = clf.connect(rdwr={'on-connect': None})
+		data = request.json
+		ndef_records = []
+		
+		for key in data:
+			ndef_records.append(nfc.ndef.Record("urn:nfc:wkt:T", key, str(data[key])))
 
-	tag.ndef.message = nfc.ndef.Message(ndef_records)
+		ndef_records.append(nfc.ndef.Record("urn:nfc:wkt:T", "photo",read_photo('photo.jpg')))
+		tag.ndef.message = nfc.ndef.Message(ndef_records)
 
-	return jsonify(data)
+		return "Tag was written successfully",200
+
+	except Exception, e:
+		return "Unable to write Tag -> "+str(e), 500
 
 @app.route('/')
 def index():
