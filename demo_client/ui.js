@@ -24,34 +24,39 @@
 
 		req.done(function(data){
 			log('Tag(s) Found',"text-success")
+			console.log(data)
+			
 			data = JSON.parse(data);
+		
+			$imgWrapper = $('<div/>',{
+				'class': 'image-wrapper'
+			})
+
 			$tbl = $('<table/>',{
 				'class':"table table-striped"
 			});
 
-			console.log(data)
+			$img = $("<img>",{
+				'class':'avatar'
+			});
 
 			for (var i = 0; i < data.length; i++) {
-				
-				if (data[i].name === 'photo'){
-					$('#read-template').find('img').attr('src', '../'+data[i].data);
+				if(data[i].name === 'photo') {
+					$img.attr('src','../'+data[i].data)
 				}else{
-					$('#read-template').find('img').attr('src', 'images/placeholder.png')
-				}
+					$img.attr('src', 'images/placeholder.png');
+				} 
 
-				$tr = $('<tr/>')
-				$tr.append($('<td/>',{
+				$('<tr/>').append($('<td/>',{
 					"text": data[i].name,
 					"class":'data-key'
 				}),$('<td/>',{
 					"text":data[i].data,
 					"class": "data-val"
-				}))
-			
-				$tbl.append($tr)
+				})).appendTo($tbl)
 			}
 			
-			$('#user-data').html($tbl)
+			$('#user-data').html($imgWrapper.append($img).add($tbl))
 		})
 
 		req.fail(function(xhr){
@@ -90,17 +95,17 @@
 		var req = $.ajax({ url: 'http://127.0.0.1:5000/card-api/write',
 			type: "POST",
 			contentType: 'application/json',
-				//data: JSON.stringify(sample_data),
-		 		data: JSON.stringify({
-		 			date: (function(){
-		 				var date = new Date()
-		 				$('#date').val(date.toLocaleString());
-		 				return date.toLocaleString()
-		 			})(), 
-		 			tra_id: $('#tra-id').val(),
-		 			tra_valuesubsidy: $('#tra_valuesubsidy').val(),
-		 			tra_fieldwork_use_id: $('#tra_fieldwork_use_id').val()
-		 		}),
+				data: JSON.stringify(sample_data),
+		 		// data: JSON.stringify({
+		 		// 	date: (function(){
+		 		// 		var date = new Date()
+		 		// 		$('#date').val(date.toLocaleString());
+		 		// 		return date.toLocaleString()
+		 		// 	})(), 
+		 		// 	tra_id: $('#tra-id').val(),
+		 		// 	tra_valuesubsidy: $('#tra_valuesubsidy').val(),
+		 		// 	tra_fieldwork_use_id: $('#tra_fieldwork_use_id').val()
+		 		// }),
 	  		dataType: 'json'
 		});
 
