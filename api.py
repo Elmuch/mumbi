@@ -78,7 +78,7 @@ def read():
       card_data.append(ndef_record.copy())
 
     clf.close()
-    return json.dumps(card_data)
+    return json.dumps(card_data),200
   except Exception, e:
     return "Unable to read Tag"+str(e),500
 

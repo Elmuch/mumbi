@@ -104,54 +104,27 @@
 			})).appendTo($tbl)
 		}
 
-		$('#write-template').fadeIn(1000, function() {
-			$(this).html($imgWrapper.append($img).add($tbl))
+		$('#read-template').fadeIn(function() {
+			$('.ajax-loader').hide();
+			$('#user-data').html($imgWrapper.append($img).add($tbl))
 		});
 
 	}
 
 	$('#read-ndef').click(function(event) {
-		$('#write-template').hide();
+		$('#form-transfer').hide();
 	  $('#read-template').fadeIn(1000);
 
-		var req = $.ajax({ url: 'http://127.0.0.1:5000/card-api/read'})
+		var req = $.ajax({
+			url: 'http://127.0.0.1:5000/card-api/read',
+			contentType: false,
+      processData: false,
+      dataType: 'json'
+    })
 
-		var waitNode = 'Touch a tag <img src="images/loader.gif">'
-		$('#user-data').html(waitNode)
+		$('#user-data').html('Touch a tag <img src="images/loader.gif">')
 
-		req.done(function(data){
-		log('Tag(s) Found',"text-success")
-		console.log(data)
-
-		$imgWrapper = $('<div/>',{
-			'class': 'image-wrapper'
-		})
-
-		$tbl = $('<table/>',{
-			'class':"table table-striped"
-		});
-
-		$img = $("<img>",{
-			'class':'avatar'
-		});
-
-		for (var i = 0; i < data.length; i++) {
-			if(data[i].name === 'photo') {
-				$img.attr('src',data[i].data)
-			}else{
-				$img.attr('src', 'images/placeholder.png');
-			} 
-
-			$('<tr/>').append($('<td/>',{
-				"text": data[i].name,
-				"class":'data-key'
-			}),$('<td/>',{
-				"text":data[i].data,
-				"class": "data-val"
-			})).appendTo($tbl)
-		}
-		$('#user-data').html($imgWrapper.append($img).add($tbl))
-	})
+		req.done(displayData)
 
 		req.fail(function(xhr){
 			log(xhr.responseText, "text-danger")
@@ -160,10 +133,11 @@
 
 	$('#write-ndef').click(function(event) {
 		event.preventDefault()
-		var waitNode = 'Touch a tag <img src="images/loader.gif">'
 
-		var form_data = new FormData($('#transfer')[0]);
-		$('#write-template').html(waitNode)
+		var form_data = new FormData($('#form-transfer')[0]);
+		$('#form-transfer').hide(function() {
+			$('.ajax-loader').show();
+		});
 
 		var sample_data = {
 			"tra_id":1,
@@ -211,7 +185,7 @@
 
 	$('#write-tab').click(function(event){
 	  $('#read-template').hide()
-	  $('#write-template').fadeIn(1000);
+	  $('#form-transfer').fadeIn(1000);
 	})
 
 	$('.clear-logs').click(function(event){

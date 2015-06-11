@@ -2,7 +2,7 @@ html{
   overflow: auto;
 }
 
-#read-template,#write-template{
+#read-template,#form-transfer,.ajax-loader{
   display: none;
 }
 
