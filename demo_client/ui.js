@@ -1,6 +1,63 @@
 
 (function($){
 	
+	// Detect reader
+	$(document).ready(function(){
+		function deviceInfo(device){
+			// A lot more readers are supported
+			// Only ACR122U have been tested
+
+			var compatibleDevices = [
+			  {
+			    deviceName: 'ACR122U PICC Interface',
+			    productId: 0x2200,
+			    vendorId: 0x072f,
+			    thumbnailURL: 'images/acr122u.png'
+			  },
+			  {
+			    deviceName: 'SCL3711 Contactless USB Smart Card Reader',
+			    productId: 0x5591,
+			    vendorId: 0x04e6,
+			    thumbnailURL: 'images/scl3711.png'
+			  }
+			],
+			deviceInfo = null;
+
+			for (var i = 0; i < compatibleDevices.length; i++)
+		    if (device.name === compatibleDevices[i].deviceName){
+		      deviceInfo = compatibleDevices[i];
+		    }
+		    
+		  if (!deviceInfo)
+		    return;
+		  
+		  var thumbnail = document.querySelector('#device-thumbnail');
+		  thumbnail.src = deviceInfo.thumbnailURL;
+		  thumbnail.classList.remove('hidden');
+		  
+		  var deviceName = document.querySelector('#device-name');
+		  deviceName.textContent = deviceInfo.deviceName;
+		  
+		  var productId = document.querySelector('#device-product-id');
+		  productId.textContent = deviceInfo.productId;
+		  
+		  var vendorId = document.querySelector('#device-vendor-id');
+		  vendorId.textContent = deviceInfo.vendorId;
+			
+			log("Card Reader Found",'text-success')
+		}
+
+		$.ajax({
+			url: 'http://127.0.0.1:5000/'
+		})
+
+		.done(deviceInfo)
+		.fail(function(jqxhr) {
+			log(jqxhr.responseText,'text-danger')
+		})
+		
+	})
+	
 	function log(message, errorType, object) {
 	  $logArea = $('.logs');
 	  $pre = $('<pre/>',{

@@ -29,13 +29,25 @@ def allowed_file(filename):
 
 #CORS(app, resources=r'/api/*', allow_headers='Content-Type')
 
-clf = nfc.ContactlessFrontend('usb')
+try:
+ clf = nfc.ContactlessFrontend('usb')
+except Exception, e:
+ print e
+
 
 
 def write_to_file(content,file_name): # Text records
   fo = open("uploads/"+file_name+".jpg","wb")
   fo.write(content)
   return("uploads/"+file_name+".jpg")
+
+@app.route('/')
+def index():
+  try:
+    return jsonify(name=clf.dev.product, vendor=clf.dev.vendor, capabilities=clf.dev.capabilities), 200
+  except Exception, e:
+    return "Unable to find Reader please make sure the Reader is connected", 400
+  
 
 @app.route('/card-api/read')
 def read():
@@ -100,11 +112,6 @@ def write():
 
   except Exception, e:
     return "Unable to write Tag -> "+str(e), 500
-
-@app.route('/')
-def index():
-  return str(clf)
-
 
 if __name__ == "__main__":
   app.run( 
