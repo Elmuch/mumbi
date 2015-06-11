@@ -72,6 +72,44 @@
 	 $logArea.append($pre);
 	}
 
+	function displayData(data){
+		log('Tag(s) Found',"text-success")
+		console.log(data)
+
+		$imgWrapper = $('<div/>',{
+			'class': 'image-wrapper'
+		})
+
+		$tbl = $('<table/>',{
+			'class':"table table-striped"
+		});
+
+		$img = $("<img>",{
+			'class':'avatar'
+		});
+
+		for (var i = 0; i < data.length; i++) {
+			if(data[i].name === 'photo') {
+				$img.attr('src',data[i].data)
+			}else{
+				$img.attr('src', 'images/placeholder.png');
+			} 
+
+			$('<tr/>').append($('<td/>',{
+				"text": data[i].name,
+				"class":'data-key'
+			}),$('<td/>',{
+				"text":data[i].data,
+				"class": "data-val"
+			})).appendTo($tbl)
+		}
+
+		$('#write-template').fadeIn(1000, function() {
+			$(this).html($imgWrapper.append($img).add($tbl))
+		});
+
+	}
+
 	$('#read-ndef').click(function(event) {
 		$('#write-template').hide();
 	  $('#read-template').fadeIn(1000);
@@ -82,41 +120,38 @@
 		$('#user-data').html(waitNode)
 
 		req.done(function(data){
-			log('Tag(s) Found',"text-success")
-			console.log(data)
-			
-			data = JSON.parse(data);
-		
-			$imgWrapper = $('<div/>',{
-				'class': 'image-wrapper'
-			})
+		log('Tag(s) Found',"text-success")
+		console.log(data)
 
-			$tbl = $('<table/>',{
-				'class':"table table-striped"
-			});
-
-			$img = $("<img>",{
-				'class':'avatar'
-			});
-
-			for (var i = 0; i < data.length; i++) {
-				if(data[i].name === 'photo') {
-					$img.attr('src','../'+data[i].data)
-				}else{
-					$img.attr('src', 'images/placeholder.png');
-				} 
-
-				$('<tr/>').append($('<td/>',{
-					"text": data[i].name,
-					"class":'data-key'
-				}),$('<td/>',{
-					"text":data[i].data,
-					"class": "data-val"
-				})).appendTo($tbl)
-			}
-			
-			$('#user-data').html($imgWrapper.append($img).add($tbl))
+		$imgWrapper = $('<div/>',{
+			'class': 'image-wrapper'
 		})
+
+		$tbl = $('<table/>',{
+			'class':"table table-striped"
+		});
+
+		$img = $("<img>",{
+			'class':'avatar'
+		});
+
+		for (var i = 0; i < data.length; i++) {
+			if(data[i].name === 'photo') {
+				$img.attr('src',data[i].data)
+			}else{
+				$img.attr('src', 'images/placeholder.png');
+			} 
+
+			$('<tr/>').append($('<td/>',{
+				"text": data[i].name,
+				"class":'data-key'
+			}),$('<td/>',{
+				"text":data[i].data,
+				"class": "data-val"
+			})).appendTo($tbl)
+		}
+		$('#user-data').html($imgWrapper.append($img).add($tbl))
+	})
 
 		req.fail(function(xhr){
 			log(xhr.responseText, "text-danger")
@@ -125,6 +160,10 @@
 
 	$('#write-ndef').click(function(event) {
 		event.preventDefault()
+		var waitNode = 'Touch a tag <img src="images/loader.gif">'
+
+		var form_data = new FormData($('#transfer')[0]);
+		$('#write-template').html(waitNode)
 
 		var sample_data = {
 			"tra_id":1,
@@ -149,7 +188,7 @@
 		  "tra_fieldwork_use_id":0
 		}
 		
-		var form_data = new FormData($('#write-template')[0]);
+	
 
 		var req = $.ajax({ 
 			url: 'http://127.0.0.1:5000/card-api/write',
@@ -161,10 +200,7 @@
 		});
 
 
-		req.done(function(xhr){
-			log("photo"+data['name']+data['size'],'text-success')
-			log(xhr.responseText,"text-success")
-		})
+		req.done(displayData)
 
 		req.fail(function(xhr){
 			log(xhr.responseText,"text-success")
