@@ -18,8 +18,10 @@
 	$('#read-ndef').click(function(event) {
 		$('#write-template').hide();
 	  $('#read-template').fadeIn(1000);
+
 		var req = $.ajax({ url: 'http://127.0.0.1:5000/card-api/read'})
-		var waitNode = 'Please swipe the card <img src="images/loader.gif">'
+
+		var waitNode = 'Touch a tag <img src="images/loader.gif">'
 		$('#user-data').html(waitNode)
 
 		req.done(function(data){
@@ -64,7 +66,7 @@
 		})
 	});
 
-	$('form').submit(function(event) {
+	$('#write-ndef').click(function(event) {
 		event.preventDefault()
 
 		var sample_data = {
@@ -89,13 +91,14 @@
 		  "tra_datefieldwork":"",
 		  "tra_fieldwork_use_id":0
 		}
-		// var formData = new FormData($('form'));
-		// debugger;
-
+		var form_data = new FormData($('#write-template')[0]);
+		
 		var req = $.ajax({ url: 'http://127.0.0.1:5000/card-api/write',
-			type: "POST",
-			contentType: 'application/json',
-				data: JSON.stringify(sample_data),
+					type: "POST",
+					data: form_data,
+					contentType: false,
+          processData: false,
+          dataType: 'json'
 		 		// data: JSON.stringify({
 		 		// 	date: (function(){
 		 		// 		var date = new Date()
@@ -106,7 +109,6 @@
 		 		// 	tra_valuesubsidy: $('#tra_valuesubsidy').val(),
 		 		// 	tra_fieldwork_use_id: $('#tra_fieldwork_use_id').val()
 		 		// }),
-	  		dataType: 'json'
 		});
 
 
