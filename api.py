@@ -11,6 +11,7 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 4 * 1024
 
 from logging import Formatter, FileHandler
 handler = FileHandler(os.path.join(basedir,'log.txt'),encoding='utf8')
@@ -47,7 +48,7 @@ def read():
     for record in tag.ndef.message:
       if record.name == 'photo':
         img_url = write_to_file(record.data,"test_photo")
-        ndef_record['data'] = img_url # Get the url and leave content in the card
+        ndef_record['data'] = img_url 
         ndef_record["type"] = record.type
         ndef_record["name"] = record.name
         card_data.append(ndef_record.copy())
@@ -67,29 +68,35 @@ def read_photo(url):
   f = open(url, 'rb')
   return f.read()
 
+def process_img(request):
+  files = request.files['file']
+    
+  if files and allowed_file(files.filename):
+    filename = secure_filename(files.filename)
+    app.logger.info('FileName: ' + filename)
+    updir = os.path.join(basedir, 'uploads/')
+    files.save(os.path.join(updir, filename))
+    file_size = os.path.getsize(os.path.join(updir, filename))
+
+    return jsonify(name=filename, size=file_size, file_path=os.path.join(updir,filename))
+
 @app.route("/card-api/write", methods=['POST'])
 def write():
   try:
-    # tag = clf.connect(rdwr={'on-connect': None})
-    data = request.json
-    files = request.files['file']
-    if files and allowed_file(files.filename):
-      filename = secure_filename(files.filename)
-      app.logger.info('FileName: ' + filename)
-      updir = os.path.join(basedir, 'uploads/')
-      files.save(os.path.join(updir, filename))
-      file_size = os.path.getsize(os.path.join(updir, filename))
-      return jsonify(name=filename, size=file_size)
-
-    # ndef_records = []
+    tag = clf.connect(rdwr={'on-connect': None})
+    ndef_records = []
     
-    # for key in data:
-    #   ndef_records.append(nfc.ndef.Record("urn:nfc:wkt:T", key, str(data[key])))
+    for key in request.form:
+      ndef_records.append(nfc.ndef.Record("urn:nfc:wkt:T", key, str(request.form[key])))
+    
+    if request.files:
+      file_response = process_img(request)
+      img_url = json.loads(file_response.data)['file_path']
+      ndef_records.append(nfc.ndef.Record("urn:nfc:wkt:T", "photo",read_photo(img_url)))
 
-    # # ndef_records.append(nfc.ndef.Record("urn:nfc:wkt:T", "photo",read_photo('photo.jpg')))
-    # tag.ndef.message = nfc.ndef.Message(ndef_records)
+    tag.ndef.message = nfc.ndef.Message(ndef_records)
 
-    # return "Tag was written successfully",200
+    return "Tag was written successfully",200
 
   except Exception, e:
     return "Unable to write Tag -> "+str(e), 500
@@ -97,10 +104,6 @@ def write():
 @app.route('/')
 def index():
   return str(clf)
-
-@app.route('/photo')
-def photo():
-  return(send_file(filename))
 
 
 if __name__ == "__main__":

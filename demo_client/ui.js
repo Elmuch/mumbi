@@ -91,28 +91,21 @@
 		  "tra_datefieldwork":"",
 		  "tra_fieldwork_use_id":0
 		}
-		var form_data = new FormData($('#write-template')[0]);
 		
-		var req = $.ajax({ url: 'http://127.0.0.1:5000/card-api/write',
-					type: "POST",
-					data: form_data,
-					contentType: false,
-          processData: false,
-          dataType: 'json'
-		 		// data: JSON.stringify({
-		 		// 	date: (function(){
-		 		// 		var date = new Date()
-		 		// 		$('#date').val(date.toLocaleString());
-		 		// 		return date.toLocaleString()
-		 		// 	})(), 
-		 		// 	tra_id: $('#tra-id').val(),
-		 		// 	tra_valuesubsidy: $('#tra_valuesubsidy').val(),
-		 		// 	tra_fieldwork_use_id: $('#tra_fieldwork_use_id').val()
-		 		// }),
+		var form_data = new FormData($('#write-template')[0]);
+
+		var req = $.ajax({ 
+			url: 'http://127.0.0.1:5000/card-api/write',
+			type: "POST",
+			data: form_data,
+			contentType: false,
+      processData: false,
+      dataType: 'json'
 		});
 
 
 		req.done(function(xhr){
+			log("photo"+data['name']+data['size'],'text-success')
 			log(xhr.responseText,"text-success")
 		})
 
