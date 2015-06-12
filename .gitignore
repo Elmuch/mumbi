@@ -1,3 +1,3 @@
 log.txt
-uploads/
-demo_client/bower_components/*
+app/uploads/
+sample/bower_components/*

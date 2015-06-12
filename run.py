@@ -1,9 +1,5 @@
+#!flask/bin/python
 
+from app import app
 
-from flask import Flask
-import api
-
-app = Flask(__name__)
-
-if __name__ == "__main__":
-  app.run(debug=True)
+app.run(debug=True, host="0.0.0.0", port=int("8000"))
