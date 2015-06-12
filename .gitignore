@@ -1,5 +1,5 @@
 log.txt
 app/uploads/
 flask/*
-*.pyc
+*.pyc 
 sample/bower_components/*
