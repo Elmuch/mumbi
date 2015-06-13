@@ -1,5 +1,6 @@
 log.txt
 app/uploads/
 env/*
+winenv/*
 *.pyc 
 sample/bower_components/*

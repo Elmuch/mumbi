@@ -1,4 +1,5 @@
 #!env/bin/python
+##!winenv/Scripts/python.exe
 
 from app import app
 
