@@ -1,5 +1,5 @@
 log.txt
 app/uploads/
-flask/*
+env/*
 *.pyc 
 sample/bower_components/*
